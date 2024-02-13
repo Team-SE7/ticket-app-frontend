@@ -1,6 +1,6 @@
-# TIKET. - Admin Movies Project
+# TIKET. - Don't miss the show, reserve on the go.
 
-This project provides the administrative interface for managing the TIKET. movie catalog.
+This project provides the client side and administrative interface for managing the TIKET. movie catalog.
 
 ## Development Workflow
 
