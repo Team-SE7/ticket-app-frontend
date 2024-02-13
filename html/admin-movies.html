@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TIKET. - Admin Movies</title>
+  <link rel="stylesheet" href="../styles/globals.css">
+  <link rel="stylesheet" href="../styles/admin-movies.css">
+  <script src="../scripts/fetcher.js" type="text/javascript"></script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header__container">
+      <div class="header__left">
+        <a class="header__logo" href="/">TIKET<span>.</span></a>
+      </div>
+      <div class="header__right">
+        <nav class="header__nav">
+          <div class="menu" id="menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-menu">
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+          </div>
+          <button id="login__btn" class="nav__link btn btn-primary">Sign In</button>
+          <button id="cart__btn" class="nav__link btn btn-secondary">Cart</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="section__wrapper">
+        <div class="table__info">
+          <h5>MOVIES</h5>
+          <button class="btn add-button" aria-label="add movie"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+              height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" class="lucide lucide-plus">
+              <path d="M5 12h14" />
+              <path d="M12 5v14" />
+            </svg>
+          </button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Movie ID</th>
+              <th>Title</th>
+              <th>Genre</th>
+              <th>Release Date</th>
+              <th>Runtime (mins)</th>
+              <th>Rating</th>
+              <th>Age Rating</th>
+              <th>Synopsis</th>
+              <th>Poster</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="table__body">
+            <!-- data will be here -->
+          </tbody>
+        </table>
+
+        <div id="addModal" class="modal">
+          <div class="modal__header">
+            <span class="modal__close">&times;</span>
+            <h2>Add Movie</h2>
+          </div>
+
+          <div class="modal__body">
+            <form class="add__form" action="">
+              <input class="form__input" placeholder="Title here..." type="text">
+              <input class="form__input" placeholder="Genre here..." type="text">
+              <input class="form__input" type="date">
+              <input class="form__input" placeholder="Runtime here..." type="number">
+              <input class="form__input" placeholder="Rating here..." type="number">
+              <input class="form__input" placeholder="Age rating here..." type="text">
+              <input class="form__input" placeholder="Synopsis here..." type="text">
+              <input class="form__input" placeholder="Poster here..." type="text">
+
+              <button class="btn form__add" type="submit">Add</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="overlay"></div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const movies = await fetchData("http://localhost:3000/movies");
+      const tableBody = document.getElementById("table__body");
+
+      movies.forEach((movie) => {
+        const newRow = document.createElement("tr");
+        const objLength = Object.keys(movie).length;
+
+        newRow.classList.add("table__row");
+
+        // Loop through each property of the movie object
+        for (const key in movie) {
+          const newColumn = document.createElement("td");
+          newColumn.classList.add("table__column");
+          newColumn.textContent = movie[key];
+          newRow.appendChild(newColumn);
+        }
+
+        // Create the 'Actions' column 
+        const actionsColumn = document.createElement("td");
+        actionsColumn.classList.add("table__column");
+
+        const editButton = document.createElement("button");
+        editButton.textContent = "Edit";
+        editButton.className = "btn edit-button";
+        actionsColumn.appendChild(editButton);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.className = "btn delete-button";
+        actionsColumn.appendChild(deleteButton);
+
+        newRow.appendChild(actionsColumn);
+        tableBody.appendChild(newRow);
+      });
+
+      // Get the modal elements
+      const addButton = document.querySelector('.add-button');
+      const modal = document.getElementById('addModal');
+      const overlay = document.querySelector('.overlay');
+      const closeButton = document.querySelector('.modal__close');
+
+      // Show Modal
+      addButton.addEventListener('click', () => {
+        modal.classList.add('show-modal');
+        overlay.classList.add('show-modal');
+      });
+
+      // Close Modal
+      closeButton.addEventListener('click', () => {
+        modal.classList.remove('show-modal');
+        overlay.classList.remove('show-modal');
+      });
+
+      // Close on overlay click
+      overlay.addEventListener('click', () => {
+        modal.classList.remove('show-modal');
+        overlay.classList.remove('show-modal');
+      });
+    });
+  </script>
+</body>
+
+</html>

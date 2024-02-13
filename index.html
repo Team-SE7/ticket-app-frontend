@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TIKET. - Don't miss the show, reserve on the go.</title>
+  <link rel="stylesheet" href="styles/globals.css">
+  <link rel="stylesheet" href="styles/landing.css">
+  <script type="text/javascript" src="scripts/index.js"></script>
+  <script type="text/javascript" src="scripts/fetcher.js"></script>
+  <script type="text/javascript" src="scripts/sanitize-dom.js"></script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header__container">
+      <div class="header__left">
+        <a class="header__logo" href="/">TIKET<span>.</span></a>
+      </div>
+      <div class="header__right">
+        <nav class="header__nav">
+          <div class="menu" id="menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-menu">
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+          </div>
+          <button id="login__btn" class="nav__link btn btn-primary">Sign In</button>
+          <button id="cart__btn" class="nav__link btn btn-secondary">Cart</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main id="main__wrapper">
+    <div class="container">
+      <section class="section__wrapper">
+        <div class="carousel__wrapper">
+        </div>
+      </section>
+
+      <section class="section__wrapper">
+        <h5 class="section__title">NOW PLAYING</h5>
+        <div class="section__item" id="section__item">
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+
+</html>
