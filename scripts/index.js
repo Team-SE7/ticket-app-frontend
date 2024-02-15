@@ -3,16 +3,32 @@ function createMovieListItem(movie) {
 	const parentDiv = document.createElement("div");
 	const imgDiv = document.createElement("div");
 	const newImg = document.createElement("img");
+	const actionLink = document.createElement("a");
 	const itemContentDiv = document.createElement("div");
 
 	parentDiv.className = "list__item";
 	imgDiv.className = "list__image";
+	actionLink.classList.add("list__action");
 	newImg.className = "list__image__item";
 	itemContentDiv.className = "list__item__content";
 
 	newImg.src = movie.poster_image_url;
 	newImg.alt = movie.title;
+
+	actionLink.href = `html/movie-detail.html?id=${movie.id}`;
+	actionLink.innerHTML = cleanHTML(
+		`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg><p>Reserve</p>`
+	);
+
+	imgDiv.addEventListener("mouseover", () => {
+		actionLink.style = "opacity: 100;";
+	});
+
+	imgDiv.addEventListener("mouseout", () => {
+		actionLink.style = "opacity: 0;";
+	});
 	imgDiv.appendChild(newImg);
+	imgDiv.appendChild(actionLink);
 
 	const title = document.createElement("h5");
 	title.className = "list__item__title";
@@ -20,7 +36,9 @@ function createMovieListItem(movie) {
 	itemContentDiv.appendChild(title);
 
 	const ratingContainer = document.createElement("div");
-	ratingContainer.className = "list__item__rating";
+	const starIconContainer = document.createElement("div");
+	ratingContainer.classList.add("list__rating__container");
+	starIconContainer.className = "list__item__rating";
 	const roundedRating = Math.round(movie.rating * 2) / 2;
 	for (let i = 0; i < roundedRating; i++) {
 		let cleanSVG;
@@ -36,15 +54,17 @@ function createMovieListItem(movie) {
 
 		const starIcon = document.createElement("div");
 		starIcon.innerHTML = cleanSVG;
-		ratingContainer.appendChild(starIcon);
+		starIconContainer.appendChild(starIcon);
 	}
 
-	itemContentDiv.appendChild(ratingContainer);
+	ratingContainer.appendChild(starIconContainer);
 
-	const button = document.createElement("button");
-	button.className = "list__item__button";
-	button.textContent = "Reserve";
-	itemContentDiv.appendChild(button);
+	const ratingInNumEl = document.createElement("p");
+	const ratingInNum = parseFloat(movie.rating).toFixed(1);
+	ratingInNumEl.innerText = ratingInNum;
+
+	ratingContainer.appendChild(ratingInNumEl);
+	itemContentDiv.appendChild(ratingContainer);
 
 	parentDiv.appendChild(imgDiv);
 	parentDiv.appendChild(itemContentDiv);
@@ -79,19 +99,19 @@ function createCarousel(movies) {
 		infoContent.classList.add("carousel__info__content");
 		infoContent.appendChild(infoTitle);
 
-		const infoAction = document.createElement("button");
+		const infoAction = document.createElement("a");
 		infoAction.className = "btn btn-primary";
 		infoAction.style.fontWeight = 700;
+		infoAction.href = `html/movie-detail.html?id=${movie.id}`;
 		infoAction.textContent = "Reserve";
 		infoContent.appendChild(infoAction);
 
 		infoDiv.appendChild(infoContent);
 
-		// Create prev/next buttons only if necessary
-		const prevButton = carouselWrapper.querySelector(".carousel__prev"); // Find if it exists
+		const prevButton = carouselWrapper.querySelector(".carousel__prev");
 		const nextButton = carouselWrapper.querySelector(".carousel__next");
 
-		if (prevButton) prevButton.remove(); // Remove if it exists
+		if (prevButton) prevButton.remove();
 		if (nextButton) nextButton.remove();
 
 		if (movies.length > 1) {
@@ -101,7 +121,8 @@ function createCarousel(movies) {
 				prevButton.innerHTML = cleanHTML(
 					'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>'
 				);
-				prevButton.addEventListener("click", () => {
+				prevButton.addEventListener("click", (e) => {
+					e.stopPropagation();
 					currentMovieIndex =
 						(currentMovieIndex - 1 + movies.length) % movies.length;
 					displayCarouselImage();
@@ -115,7 +136,8 @@ function createCarousel(movies) {
 				nextButton.innerHTML = cleanHTML(
 					'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>'
 				);
-				nextButton.addEventListener("click", () => {
+				nextButton.addEventListener("click", (e) => {
+					e.stopPropagation();
 					currentMovieIndex = (currentMovieIndex + 1) % movies.length;
 					displayCarouselImage();
 				});
@@ -145,7 +167,6 @@ function addEventListeners() {
 	const menu = document.querySelector("#menu");
 	const menuListContainer = document.querySelector(".menu__list");
 
-	// Menu Toggle
 	menu.addEventListener("click", () => {
 		if (menuListContainer) {
 			menuListContainer.remove();
@@ -154,13 +175,11 @@ function addEventListeners() {
 		}
 	});
 
-	// Function to create the menu list
 	function createMenuList() {
 		const menuList = document.createElement("div");
 		menuList.className = "menu__list";
 		menuList.id = "menu__list";
 
-		// Close Button
 		const closeButton = document.createElement("div");
 		closeButton.id = "close-btn";
 		closeButton.innerHTML = cleanHTML(
@@ -169,7 +188,6 @@ function addEventListeners() {
 		closeButton.addEventListener("click", () => menuList.remove());
 		menuList.appendChild(closeButton);
 
-		// Menu Buttons
 		const signInButton = document.createElement("button");
 		signInButton.className = "btn btn-primary";
 		signInButton.textContent = "Sign In";
