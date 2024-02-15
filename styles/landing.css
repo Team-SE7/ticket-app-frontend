@@ -33,7 +33,7 @@
 	font-size: 1rem;
 	line-height: 1.5rem;
 	cursor: pointer;
-	padding: 0.675rem 2rem;
+	padding: 0.625rem 1.5rem;
 }
 
 .carousel__image {
@@ -116,7 +116,6 @@
 }
 
 .list__item__content {
-	/* padding: 0.625rem; */
 	width: 100%;
 }
 
@@ -212,10 +211,6 @@
 
 	.nav__link {
 		display: block;
-	}
-
-	.menu {
-		display: none;
 	}
 
 	.section__wrapper {

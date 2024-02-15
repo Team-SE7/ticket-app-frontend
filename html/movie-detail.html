@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TIKET. - Movie Detail</title>
+  <link rel="stylesheet" href="../styles/globals.css">
+  <link rel="stylesheet" href="../styles/movie-detail.css">
+  <script src="../scripts/fetcher.js" type="text/javascript"></script>
+  <script src="../scripts/sanitize-dom.js" type="text/javascript"></script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header__container">
+      <div class="header__left">
+        <a class="header__logo" href="/">TIKET<span>.</span></a>
+      </div>
+      <div class="header__right">
+        <nav class="header__nav">
+          <div class="menu" id="menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-menu">
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+          </div>
+          <button id="login__btn" class="nav__link btn btn-primary">Sign In</button>
+          <button id="cart__btn" class="nav__link btn btn-secondary">Cart</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="detail__wrapper"></div>
+    </div>
+  </main>
+
+  <script>
+    function minutesToHours(totalMinutes) {
+      if (typeof totalMinutes !== 'number' || isNaN(totalMinutes) || totalMinutes < 0) {
+        throw new Error("Input must be a positive number of minutes.");
+      }
+
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+
+      return { hours, minutes };
+    }
+
+    function renderRating(movie) {
+      const starIconContainer = document.createElement("div");
+      starIconContainer.className = "star__wrapper";
+      const roundedRating = Math.round(movie.rating * 2) / 2;
+
+      for (let i = 0; i < roundedRating; i++) {
+        let cleanSVG;
+        if (i + 0.5 === roundedRating) {
+          cleanSVG = cleanHTML(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star-half rating__item"><path d="M12 17.8 5.8 21 7 14.1 2 9.3l7-1L12 2" /></svg>'
+          );
+        } else {
+          cleanSVG = cleanHTML(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star rating__item"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>'
+          );
+        }
+
+        const starIcon = document.createElement("div");
+        starIcon.innerHTML = cleanSVG;
+        starIconContainer.appendChild(starIcon);
+      }
+
+      return starIconContainer;
+    }
+
+    function renderImage(movie) {
+      const imgDiv = document.createElement("div");
+      const innerWrapper = document.createElement("div");
+      const infoWrapper = document.createElement("div");
+      const movieTitle = document.createElement("h5");
+      const movieRating = document.createElement("div");
+      const movieImg = document.createElement("img");
+      const ageBadge = document.createElement("div");
+
+      innerWrapper.classList.add("inner__wrapper");
+      imgDiv.classList.add("image__wrapper");
+
+      movieTitle.classList.add("movie__title");
+      movieImg.classList.add("movie__image");
+      ageBadge.classList.add("age__badge");
+
+      movieTitle.textContent = movie.title;
+      movieImg.src = movie.poster_image_url;
+      movieImg.alt = movie.title;
+      ageBadge.textContent = movie.age_rating;
+
+      infoWrapper.appendChild(movieTitle);
+      infoWrapper.appendChild(renderRating(movie));
+
+      innerWrapper.appendChild(infoWrapper);
+      innerWrapper.appendChild(ageBadge);
+      imgDiv.appendChild(innerWrapper);
+      imgDiv.appendChild(movieImg);
+
+      return imgDiv;
+    }
+
+    function renderDetail(movie) {
+      const detailDiv = document.createElement("div");
+      const movieDescription = document.createElement("p");
+      const moreInfoWrapper = document.createElement("div");
+      const genreBadge = document.createElement("a");
+      const runtimeText = document.createElement("p");
+
+      detailDiv.classList.add("more__wrapper");
+      movieDescription.classList.add("movie__description");
+      moreInfoWrapper.classList.add("more__info__wrapper");
+      genreBadge.classList.add("genre__badge");
+
+      movieDescription.textContent = movie.synopsis;
+      genreBadge.textContent = movie.genre;
+      let runtime = minutesToHours(parseInt(movie.runtime));
+      runtimeText.textContent = runtime.hours && runtime.minutes ? `${runtime.hours}h ${runtime.minutes}min` : `${runtime.minutes}min`;
+
+      detailDiv.appendChild(movieDescription);
+      moreInfoWrapper.appendChild(genreBadge);
+      moreInfoWrapper.appendChild(runtimeText);
+      detailDiv.appendChild(moreInfoWrapper);
+
+      return detailDiv;
+    }
+
+    function renderWrapper(movie) {
+      const detailWrapper = document.querySelector(".detail__wrapper");
+      const imgDiv = renderImage(movie);
+      const detailDiv = renderDetail(movie);
+
+      detailWrapper.appendChild(imgDiv);
+      detailWrapper.appendChild(detailDiv);
+    }
+    document.addEventListener("DOMContentLoaded", async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const movieId = urlParams.get('id');
+      const { data: movieDetail } = await fetchData(`https://rich-gold-crow-hem.cyclic.app/movie-details/${movieId}`);
+
+      renderWrapper(movieDetail);
+    });
+  </script>
+</body>
+
+</html>
