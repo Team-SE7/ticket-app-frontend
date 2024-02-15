@@ -40,16 +40,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 		dataWrapper.appendChild(newMovie);
 	});
 
-	// Get the modal elements
 	const addButton = document.querySelector(".add-button");
 
-	function openModal(movieData = null) {
+	function openModal(movieData = null, type) {
 		modal.classList.add("show-modal");
 		overlay.classList.add("show-modal");
 
 		if (!movieData) {
 			modalTitle.textContent = "Add Movie";
-			addForm.reset(); // Clear all input fields
+			addForm.reset();
 		} else {
 			const addButton = document.getElementById("form__add");
 			modalTitle.textContent = "Edit Movie";
@@ -64,48 +63,55 @@ document.addEventListener("DOMContentLoaded", async () => {
 			addButton.textContent = "Save changes";
 		}
 
-		addForm.addEventListener("submit", async (event) => {
-			event.preventDefault();
-			let formData = {};
+		addForm.addEventListener(
+			"submit",
+			async (e) => await submitHandler({ e, movieData, type })
+		);
+	}
 
-			for (let i = 0; i < addForm.elements.length - 1; i++) {
-				if (addForm.elements[i].value.trim() === "") {
-					throw new Error("Data is not completely filled yet.");
-				}
+	async function submitHandler({ e, movieData, type }) {
+		e.preventDefault();
+		let formData = {};
 
-				if (
-					addForm.elements[i].id !== "rating" &&
-					addForm.elements[i].id !== "runtime"
-				) {
-					formData[addForm.elements[i].id] = addForm.elements[i].value;
-				} else {
-					formData[addForm.elements[i].id] = parseInt(
-						addForm.elements[i].value
-					);
-				}
+		for (let i = 0; i < addForm.elements.length - 1; i++) {
+			if (addForm.elements[i].value.trim() === "") {
+				alert("Data is not completely filled yet.");
 			}
 
-			if (modalTitle.textContent === "Add Movie") {
-				await addMovie(formData);
+			if (
+				addForm.elements[i].id !== "rating" &&
+				addForm.elements[i].id !== "runtime"
+			) {
+				formData[addForm.elements[i].id] = addForm.elements[i].value;
 			} else {
-				await editMovie(formData, movieData.id);
+				formData[addForm.elements[i].id] = parseInt(addForm.elements[i].value);
 			}
+		}
 
-			modal.classList.remove("show-modal");
-			overlay.classList.remove("show-modal");
-		});
+		switch (type) {
+			case "add":
+				await addMovie(formData);
+				break;
+			case "edit":
+				await editMovie(formData, movieData.id);
+				break;
+		}
+
+		modal.classList.remove("show-modal");
+		overlay.classList.remove("show-modal");
+		formData = {};
 	}
 
 	async function addMovie(formData) {
 		try {
-			const response = await fetchData("http://localhost:8000/movies", {
+			await fetchData("http://localhost:8000/movies", {
 				method: "POST",
 				body: JSON.stringify(formData),
 				headers: {
 					"Content-Type": "application/json",
 				},
 			});
-			alert("Movie added:", response);
+			alert("Movie added!");
 		} catch (error) {
 			alert("Error adding movie:", error);
 		}
@@ -113,17 +119,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	async function editMovie(formData, movieId) {
 		try {
-			const response = await fetchData(
-				`http://localhost:8000/movies/${movieId}`,
-				{
-					method: "PUT",
-					body: JSON.stringify(formData),
-					headers: {
-						"Content-Type": "application/json",
-					},
-				}
-			);
-			alert("Movie updated:", response.title);
+			await fetchData(`http://localhost:8000/movies/${movieId}`, {
+				method: "PUT",
+				body: JSON.stringify(formData),
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+			alert("Movie updated!");
 		} catch (error) {
 			alert("Error updating movie:", error);
 		}
@@ -134,12 +137,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 			const confirmed = confirm("Are you sure you want to delete this movie?");
 			if (!confirmed) return;
 
-			const response = await fetchData(
-				`http://localhost:8000/movies/${movieId}`,
-				{
-					method: "DELETE",
-				}
-			);
+			await fetchData(`http://localhost:8000/movies/${movieId}`, {
+				method: "DELETE",
+			});
 			alert("Movie deleted!");
 		} catch (error) {
 			alert("Error deleting movie:", error);
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	}
 
 	addButton.addEventListener("click", () => {
-		openModal();
+		openModal(null, "add");
 	});
 
 	closeButton.addEventListener("click", () => {
@@ -162,11 +162,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	dataWrapper.addEventListener("click", (event) => {
 		if (event.target.classList.contains("edit-button")) {
-			const movieWrapper = event.target.closest(".movie__wrapper"); // Find the movie container
-			const movieId = parseInt(movieWrapper.querySelector("img").alt); // Get ID from the alt text
+			const movieWrapper = event.target.closest(".movie__wrapper");
+			const movieId = parseInt(movieWrapper.querySelector("img").alt);
 
 			const movieToEdit = movies.find((movie) => movie.id === movieId);
-			openModal(movieToEdit);
+			openModal(movieToEdit, "edit");
 		} else if (event.target.classList.contains("delete-button")) {
 			const movieWrapper = event.target.closest(".movie__wrapper");
 			const movieId = parseInt(movieWrapper.querySelector("img").alt);
