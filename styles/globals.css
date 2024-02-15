@@ -9,6 +9,10 @@
 	--darker: #191b1f;
 	--darkest: #0b0e0f;
 	--red: rgb(239 68 68);
+	--danger: rgb(239 68 68);
+	--danger-darker: rgb(185 28 28);
+	--warning: rgb(234 179 8);
+	--warning-darker: rgb(161 98 7);
 }
 
 * {

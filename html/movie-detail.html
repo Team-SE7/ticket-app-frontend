@@ -116,21 +116,39 @@
       const moreInfoWrapper = document.createElement("div");
       const genreBadge = document.createElement("a");
       const runtimeText = document.createElement("p");
+      const bookBtn = document.createElement("button");
+
+      bookBtn.addEventListener("click", async () => {
+        let formData = { movie_id: movie.id };
+
+        await fetchData("https://rich-gold-crow-hem.cyclic.app/order-details", {
+          method: "POST",
+          body: JSON.stringify(formData),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        alert("Successfully booked!");
+      });
 
       detailDiv.classList.add("more__wrapper");
       movieDescription.classList.add("movie__description");
       moreInfoWrapper.classList.add("more__info__wrapper");
       genreBadge.classList.add("genre__badge");
+      bookBtn.className = "btn btn-primary book__btn";
 
       movieDescription.textContent = movie.synopsis;
       genreBadge.textContent = movie.genre;
       let runtime = minutesToHours(parseInt(movie.runtime));
       runtimeText.textContent = runtime.hours && runtime.minutes ? `${runtime.hours}h ${runtime.minutes}min` : `${runtime.minutes}min`;
+      bookBtn.textContent = "Book";
 
       detailDiv.appendChild(movieDescription);
       moreInfoWrapper.appendChild(genreBadge);
       moreInfoWrapper.appendChild(runtimeText);
       detailDiv.appendChild(moreInfoWrapper);
+      detailDiv.appendChild(bookBtn);
 
       return detailDiv;
     }
@@ -143,6 +161,7 @@
       detailWrapper.appendChild(imgDiv);
       detailWrapper.appendChild(detailDiv);
     }
+
     document.addEventListener("DOMContentLoaded", async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const movieId = urlParams.get('id');
