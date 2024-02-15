@@ -157,6 +157,10 @@
 	color: white;
 }
 
+.list__action > p {
+	font-weight: 700;
+}
+
 .list__item__title {
 	font-size: 1.125rem;
 	line-height: 1.75rem;

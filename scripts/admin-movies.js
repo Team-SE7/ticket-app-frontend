@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
-	const movies = await fetchData("http://localhost:8000/movies");
+	const { data: movies } = await fetchData(
+		"https://rich-gold-crow-hem.cyclic.app/movies"
+	);
 	const modal = document.getElementById("movieModal");
 	const overlay = document.querySelector(".overlay");
 	const closeButton = document.querySelector(".modal__close");
@@ -45,22 +47,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 	function openModal(movieData = null, type) {
 		modal.classList.add("show-modal");
 		overlay.classList.add("show-modal");
+		const formAddBtn = document.getElementById("form__add");
+		formAddBtn.textContent = "";
 
 		if (!movieData) {
 			modalTitle.textContent = "Add Movie";
+			formAddBtn.textContent = "Add";
 			addForm.reset();
 		} else {
-			const addButton = document.getElementById("form__add");
 			modalTitle.textContent = "Edit Movie";
 			addForm.elements["title"].value = movieData.title;
 			addForm.elements["genre"].value = movieData.genre;
 			addForm.elements["release_date"].value = movieData.release_date;
 			addForm.elements["runtime"].value = movieData.runtime;
 			addForm.elements["rating"].value = movieData.rating;
-			addForm.elements["age__rating"].value = movieData.age__rating;
+			addForm.elements["age_rating"].value = movieData.age_rating;
 			addForm.elements["synopsis"].value = movieData.synopsis;
 			addForm.elements["poster_image_url"].value = movieData.poster_image_url;
-			addButton.textContent = "Save changes";
+			formAddBtn.textContent = "Save changes";
 		}
 
 		addForm.addEventListener(
@@ -104,7 +108,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	async function addMovie(formData) {
 		try {
-			await fetchData("http://localhost:8000/movies", {
+			await fetchData("https://rich-gold-crow-hem.cyclic.app/movie-control", {
 				method: "POST",
 				body: JSON.stringify(formData),
 				headers: {
@@ -112,6 +116,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 				},
 			});
 			alert("Movie added!");
+
+			// remove below if needed
+			location.reload();
 		} catch (error) {
 			alert("Error adding movie:", error);
 		}
@@ -119,14 +126,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	async function editMovie(formData, movieId) {
 		try {
-			await fetchData(`http://localhost:8000/movies/${movieId}`, {
-				method: "PUT",
-				body: JSON.stringify(formData),
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+			await fetchData(
+				`https://rich-gold-crow-hem.cyclic.app/movie-control/${movieId}`,
+				{
+					method: "PUT",
+					body: JSON.stringify(formData),
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
 			alert("Movie updated!");
+
+			// remove below if needed
+			location.reload();
 		} catch (error) {
 			alert("Error updating movie:", error);
 		}
@@ -137,10 +150,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 			const confirmed = confirm("Are you sure you want to delete this movie?");
 			if (!confirmed) return;
 
-			await fetchData(`http://localhost:8000/movies/${movieId}`, {
-				method: "DELETE",
-			});
+			await fetchData(
+				`https://rich-gold-crow-hem.cyclic.app/movie-control/${movieId}`,
+				{
+					method: "DELETE",
+				}
+			);
 			alert("Movie deleted!");
+
+			// remove below if needed
+			location.reload();
 		} catch (error) {
 			alert("Error deleting movie:", error);
 		}

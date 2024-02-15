@@ -202,8 +202,8 @@ function addEventListeners() {
 
 // DOMContentLoaded -  Initialize everything together
 document.addEventListener("DOMContentLoaded", async () => {
-	const movies = await fetchData(
-		"https://odd-cyan-crow-shoe.cyclic.app/movies"
+	const { data: movies } = await fetchData(
+		"https://rich-gold-crow-hem.cyclic.app/movies"
 	);
 	displayMovieList(movies);
 	createCarousel(movies);
