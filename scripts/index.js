@@ -1,4 +1,3 @@
-// Helper Functions
 function createMovieListItem(movie) {
 	const parentDiv = document.createElement("div");
 	const imgDiv = document.createElement("div");
@@ -144,14 +143,12 @@ function createCarousel(movies) {
 		}
 	}
 
-	// Initial image display
 	displayCarouselImage();
 
 	carouselWrapper.appendChild(carImage);
 	carouselWrapper.appendChild(infoDiv);
 }
 
-// Initialize page elements
 function displayMovieList(movies) {
 	const sectionItem = document.getElementById("section__item");
 	sectionItem.innerHTML = "";
@@ -161,51 +158,77 @@ function displayMovieList(movies) {
 	});
 }
 
-function addEventListeners() {
-	const menu = document.querySelector("#menu");
-	const menuListContainer = document.querySelector(".menu__list");
+function renderModal(type) {
+	const modal = document.getElementById("modal");
+	const form = document.querySelector(".form");
+	const closeButton = document.querySelector(".modal__close");
+	const overlay = document.querySelector(".overlay");
 
-	menu.addEventListener("click", () => {
-		if (menuListContainer) {
-			menuListContainer.remove();
-		} else {
-			createMenuList();
-		}
+	modal.classList.add("show-modal");
+	overlay.classList.add("show-modal");
+
+	if (type === "login") {
+		const formBtn = document.getElementById("form__submit");
+		formBtn.textContent = "";
+		modalTitle.textContent = "Sign in";
+		formBtn.textContent = "Submit";
+		form.style.display = "block";
+		form.reset();
+	} else {
+		const formBtn = document.getElementById("form__submit");
+		formBtn.textContent = "";
+		modalTitle.textContent = "Cart";
+		formBtn.textContent = "Checkout";
+		form.style.display = "none";
+	}
+
+	closeButton.addEventListener("click", () => {
+		modal.classList.remove("show-modal");
+		overlay.classList.remove("show-modal");
 	});
 
-	function createMenuList() {
-		const menuList = document.createElement("div");
-		menuList.className = "menu__list";
-		menuList.id = "menu__list";
+	overlay.addEventListener("click", () => {
+		modal.classList.remove("show-modal");
+		overlay.classList.remove("show-modal");
+	});
 
-		const closeButton = document.createElement("div");
-		closeButton.id = "close-btn";
-		closeButton.innerHTML = cleanHTML(
-			'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-circle"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>'
-		);
-		closeButton.addEventListener("click", () => menuList.remove());
-		menuList.appendChild(closeButton);
+	form.addEventListener("submit", (e) => {
+		console.log("hello world");
+	});
+}
 
-		const signInButton = document.createElement("button");
-		signInButton.className = "btn btn-primary";
-		signInButton.textContent = "Sign In";
-		menuList.appendChild(signInButton);
+function renderDropdown() {
+	const menu = document.querySelector(".menu");
+	const dropdown = document.querySelector(".dropdown");
+	const menuSvg = menu.querySelector(".lucide.lucide-menu");
+	const closeSvg = menu.querySelector(".lucide.lucide-x");
 
-		const cartButton = document.createElement("button");
-		cartButton.className = "btn btn-secondary";
-		cartButton.textContent = "Cart";
-		menuList.appendChild(cartButton);
-
-		menu.appendChild(menuList);
-	}
+	menu.addEventListener("click", () => {
+		dropdown.classList.toggle("show-dropdown");
+		menuSvg.classList.toggle("hidden");
+		closeSvg.classList.toggle("hidden");
+	});
 }
 
 // DOMContentLoaded -  Initialize everything together
 document.addEventListener("DOMContentLoaded", async () => {
-	const movies = await fetchData(
-		"https://odd-cyan-crow-shoe.cyclic.app/movies"
+	const { data: movies } = await fetchData(
+		"https://rich-gold-crow-hem.cyclic.app/movies"
 	);
+	renderDropdown();
 	displayMovieList(movies);
 	createCarousel(movies);
-	addEventListeners();
+
+	const loginBtns = document.querySelectorAll("#sign-in");
+	loginBtns.forEach((btn) => {
+		btn.addEventListener("click", () => {
+			renderModal("login");
+		});
+	});
+	const cartBtns = document.querySelectorAll("#cart");
+	cartBtns.forEach((btn) => {
+		btn.addEventListener("click", () => {
+			renderModal("cart");
+		});
+	});
 });
