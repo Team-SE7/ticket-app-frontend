@@ -83,6 +83,7 @@ header {
 .btn-primary {
 	background-color: var(--green);
 	color: var(--darkest);
+	font-weight: 700;
 }
 
 .btn-primary:hover {
@@ -92,6 +93,7 @@ header {
 .btn-secondary {
 	background-color: transparent;
 	color: white;
+	font-weight: 700;
 }
 
 .btn-secondary:hover {
